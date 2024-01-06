@@ -1,5 +1,6 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+import openai
 import tensorflow as tf
 import cv2
 import mediapipe as mp
@@ -7,6 +8,16 @@ from keras.models import load_model
 import numpy as np
 import time
 import pandas as pd
+
+#api_key = os.environ.get("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")
+#client = OpenAI(api_key=api_key)
+
+#def get_chatgpt_response(prompt):
+    #chat_completion = client.chat.completions.create(
+        #messages=[{"role": "user", "content": prompt}],
+        #model="gpt-3.5-turbo",
+    )
+    #return chat_completion.choices[0].message['content']
 
 model = load_model('smnist.h5')
 
@@ -98,6 +109,11 @@ while True:
                 print("Predicted Character 3: ", key)
                 print('Confidence 3: ', 100*value)
         time.sleep(5)
+
+#prompt_text = "The prompt you have formed from recognized signs"
+#story_part = get_chatgpt_response(prompt_text)
+#print(story_part)
+
 
     framergb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     result = hands.process(framergb)
