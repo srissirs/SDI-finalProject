@@ -9,6 +9,8 @@ import numpy as np
 import time
 import pandas as pd
 
+predicted_word = ""
+
 #api_key = os.environ.get("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")
 #client = OpenAI(api_key=api_key)
 
@@ -16,7 +18,7 @@ import pandas as pd
     #chat_completion = client.chat.completions.create(
         #messages=[{"role": "user", "content": prompt}],
         #model="gpt-3.5-turbo",
-    )
+#    )
     #return chat_completion.choices[0].message['content']
 
 model = load_model('smnist.h5')
@@ -30,11 +32,17 @@ _, frame = cap.read()
 
 h, w, c = frame.shape
 
+saved_words = []
 img_counter = 0
 analysisframe = ''
 letterpred = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y']
 while True:
     _, frame = cap.read()
+
+    # Display predicted word with highest confidence
+    cv2.rectangle(frame, (10, 10), (600, 50), (255, 255, 255), -1)
+    cv2.putText(frame, f"Predicted Word: {predicted_word}", (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+
 
     k = cv2.waitKey(1)
     if k%256 == 27:
@@ -43,6 +51,7 @@ while True:
         break
     elif k%256 == 32:
         # SPACE pressed
+    
         analysisframe = frame
         showframe = analysisframe
         cv2.imshow("Frame", showframe)
@@ -109,10 +118,18 @@ while True:
                 print("Predicted Character 3: ", key)
                 print('Confidence 3: ', 100*value)
         time.sleep(5)
-
-#prompt_text = "The prompt you have formed from recognized signs"
-#story_part = get_chatgpt_response(prompt_text)
-#print(story_part)
+        for key, value in letter_prediction_dict.items():
+            if value == high1:
+                predicted_word += key
+                break
+    elif k%256 == 13:  # Enter to save word
+        saved_words.append(predicted_word)
+        print(saved_words)
+        predicted_word = "" 
+    elif k%256 == 8:  # Backspace to delete character 
+        predicted_word = predicted_word[:-1]
+    elif k%256 != 255:  
+        predicted_word += chr(k%256).upper()
 
 
     framergb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
