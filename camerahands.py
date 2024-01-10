@@ -8,6 +8,8 @@ from keras.models import load_model
 import numpy as np
 import time
 import pandas as pd
+import tkinter as tk
+from tkinter import messagebox
 
 predicted_word = ""
 
@@ -170,4 +172,20 @@ chat_completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
 )
 
-print(chat_completion.choices[0].message.content)
+res= chat_completion.choices[0].message.content
+print(res)
+
+def close_window():
+    root.destroy()
+
+root = tk.Tk()
+
+window = tk.Toplevel(root)
+
+label = tk.Label(window, text=res, padx=20, pady=20)
+label.pack()
+
+close_button = tk.Button(window, text="Close", command=close_window)
+close_button.pack(pady=10)
+
+root.mainloop()
