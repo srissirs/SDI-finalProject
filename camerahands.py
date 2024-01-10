@@ -1,6 +1,6 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
-import openai
+from openai import OpenAI
 import tensorflow as tf
 import cv2
 import mediapipe as mp
@@ -10,16 +10,6 @@ import time
 import pandas as pd
 
 predicted_word = ""
-
-#api_key = os.environ.get("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")
-#client = OpenAI(api_key=api_key)
-
-#def get_chatgpt_response(prompt):
-    #chat_completion = client.chat.completions.create(
-        #messages=[{"role": "user", "content": prompt}],
-        #model="gpt-3.5-turbo",
-#    )
-    #return chat_completion.choices[0].message['content']
 
 model = load_model('smnist.h5')
 
@@ -160,3 +150,24 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
+
+client = OpenAI(api_key='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')
+
+content = "You act as a story generator and I will give you a list of six words that describe the 'protagonist', 'antagonist', 'occupation of the protagonist', 'location', 'the protagonist's weakness' and 'motivation of the antagonist'. Then with these six words that i give you, you will make a short story not longer than 10 sentences and you can get creative and surrealistic, try to avoid a typical storyline. Prompts: "
+
+prompts = ', '.join(saved_words)
+content = content + prompts
+
+client = OpenAI(api_key='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')
+
+chat_completion = client.chat.completions.create(
+    messages=[
+        {
+            "role": "user",
+            "content": content
+        }
+    ],
+    model="gpt-3.5-turbo",
+)
+
+print(chat_completion.choices[0].message.content)
